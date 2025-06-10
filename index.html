@@ -1,25 +1,174 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RespondeYa</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+  <meta charset="UTF-8">
+  <title>ChatBot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
 
+    .chat-container {
+      max-width: 500px;
+      margin: 40px auto;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background-color: #004aad;
+      color: #fff;
+      padding: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chat-box {
+      height: 400px;
+      overflow-y: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .chat-input button {
+      padding: 12px 20px;
+      background-color: #004aad;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: #e0f7fa;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background-color: #f1f0f0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 75%;
+    }
+  </style>
+</head>
 <body>
+
   <div class="chat-container">
-    <div class="chat-header">🤖 RespondeYa</div>
-    <div class="chat-box" id="chat-box">
-      <div class="bot-message">¡Hola! ¿Qué deseas consultar hoy?</div>
-    </div>
+    <div class="chat-header">Asistente Virtual</div>
+    <div class="chat-box" id="chat-box"></div>
     <div class="chat-input">
-      <input type="text" id="user-input" placeholder="Escribe tu mensaje..." />
-      <button onclick="sendMessage()">Enviar</button>
+      <input type="text" id="user-input" placeholder="Escribe tu mensaje aquí..." />
+      <button id="send-button">Enviar</button>
     </div>
   </div>
-  <script src="script.js"></script>
-</body>
 
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("user-input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage(message, "user");
+      respondToMessage(message.toLowerCase());
+      input.value = "";
+    }
+
+    function appendMessage(message, sender) {
+      const chatBox = document.getElementById("chat-box");
+      const messageElement = document.createElement("div");
+      messageElement.className = sender === "user" ? "user-message" : "bot-message";
+      messageElement.innerText = (sender === "user" ? "👤 Tú: " : "🤖 ") + message;
+      chatBox.appendChild(messageElement);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function respondToMessage(message) {
+      let response = "";
+      const normalized = message.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+      if (/(buen[oa]s?\s?(d[ií]as|tardes|noches)|hola)/.test(normalized)) {
+        response = "¡Hola! ¿Qué deseas consultar hoy?";
+      } else if (normalized.includes("plan") && normalized.includes("telefonia")) {
+        response = "📱 Planes de telefonía disponibles:\n- 6GB por 60.000 Gs\n- 9GB por 90.000 Gs\n- 15GB por 150.000 Gs\n- 50GB por 300.000 Gs.";
+      } else if (normalized.includes("que incluye el plan de 6")) {
+        response = "📱 El plan de 6GB incluye:\n- Llamadas y mensajes ilimitados\n- Roaming a Argentina, Chile y Uruguay\n- 10.000 Gs de saldo\n- WhatsApp gratis";
+      } else if (normalized.includes("que incluye el plan de 15")) {
+        response = "📱 El plan de 15GB incluye:\n- Llamadas y mensajes ilimitados\n- Roaming mundial\n- 10.000 Gs de saldo\n- WhatsApp gratis";
+      } else if (normalized.includes("plan") && normalized.includes("internet")) {
+        response = "🌐 Planes de Internet:\n- 50Mbps por 150.000 Gs\n- 100Mbps por 250.000 Gs\n- 300Mbps por 400.000 Gs\nTodos incluyen modem Wi-Fi gratis, soporte 24/7 y sin costo de instalación.";
+      } else if (
+        normalized.includes("quiero adquirir") ||
+        normalized.includes("quiero contratar") ||
+        normalized.includes("como contratar")
+      ) {
+        response = "Te paso con nuestro equipo de ventas. Un momento...";
+      } else if (
+        normalized.includes("telefonos") || normalized.includes("celulares") || normalized.includes("smartphones")
+      ) {
+        response = "📱 Modelos disponibles:\n" +
+          "1. Samsung Galaxy A14 - 1.000.000 Gs\n" +
+          "2. Xiaomi Redmi Note 11 - 1.200.000 Gs\n" +
+          "3. iPhone 11 - 3.000.000 Gs\n" +
+          "4. Moto G22 - 950.000 Gs\n" +
+          "5. Samsung Galaxy S22 - 4.500.000 Gs\n" +
+          "6. Xiaomi Poco X5 - 1.600.000 Gs\n" +
+          "7. iPhone SE - 2.300.000 Gs\n" +
+          "8. Realme 10 - 1.400.000 Gs\n" +
+          "9. Huawei Nova Y70 - 1.000.000 Gs\n" +
+          "10. ZTE Blade V40 - 850.000 Gs";
+      } else if (normalized.includes("preguntas frecuentes") || normalized.includes("dudas frecuentes")) {
+        response = "❓ Dudas frecuentes:\n" +
+          "- ¿Cómo contratar un plan?\n" +
+          "- ¿Qué incluye cada plan?\n" +
+          "- ¿Qué modelos de celulares tienen?\n" +
+          "- ¿Hay promociones activas?\n" +
+          "- ¿El roaming está incluido?\n" +
+          "- ¿Qué velocidad tiene el internet?\n" +
+          "- ¿Cuánto tarda la instalación?\n" +
+          "- ¿Puedo cambiar de plan luego?\n" +
+          "- ¿Los planes tienen permanencia?\n" +
+          "- ¿Hay soporte técnico 24/7?";
+      } else {
+        response = "🤖 No entendí tu mensaje. Podés consultar sobre: planes de telefonía, internet, TV, smartphones, o cómo contratar.";
+      }
+
+      appendMessage(response, "bot");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("send-button").addEventListener("click", sendMessage);
+      document.getElementById("user-input").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+    });
+  </script>
+</body>
 </html>
