@@ -1,0 +1,93 @@
+function sendMessage() {
+  const input = document.getElementById("user-input");
+  const message = input.value.trim();
+  if (!message) return;
+
+  appendMessage(message, "user");
+  respondToMessage(message.toLowerCase());
+  input.value = "";
+}
+
+function appendMessage(message, sender) {
+  const chatBox = document.getElementById("chat-box");
+  const messageElement = document.createElement("div");
+  messageElement.className = sender === "user" ? "user-message" : "bot-message";
+  messageElement.innerText = (sender === "user" ? "👤 Tú: " : "🤖 ") + message;
+  chatBox.appendChild(messageElement);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function respondToMessage(message) {
+  let response = "";
+
+  // Normalización básica
+  const normalized = message.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // Saludos
+  if (/(buen[oa]s?\s?(d[ií]as|tardes|noches)|hola)/.test(normalized)) {
+    response = "¡Hola! ¿Qué deseas consultar hoy?";
+  }
+
+  // Planes de telefonía
+  else if (normalized.includes("plan") && normalized.includes("telefonia")) {
+    response = "📱 Planes de telefonía disponibles:\n- 6GB por 60.000 Gs\n- 9GB por 90.000 Gs\n- 15GB por 150.000 Gs\n- 50GB por 300.000 Gs.";
+  }
+
+  // Detalles específicos de planes
+  else if (normalized.includes("que incluye el plan de 6")) {
+    response = "📱 El plan de 6GB incluye:\n- Llamadas y mensajes ilimitados\n- Roaming a Argentina, Chile y Uruguay\n- 10.000 Gs de saldo\n- WhatsApp gratis";
+  } else if (normalized.includes("que incluye el plan de 15")) {
+    response = "📱 El plan de 15GB incluye:\n- Llamadas y mensajes ilimitados\n- Roaming mundial\n- 10.000 Gs de saldo\n- WhatsApp gratis";
+  }
+
+  // Planes de Internet
+  else if (normalized.includes("plan") && normalized.includes("internet")) {
+    response = "🌐 Planes de Internet:\n- 50Mbps por 150.000 Gs\n- 100Mbps por 250.000 Gs\n- 300Mbps por 400.000 Gs\nTodos incluyen modem Wi-Fi gratis, soporte 24/7 y sin costo de instalación.";
+  }
+
+  // Contratación de servicios
+  else if (
+    normalized.includes("quiero adquirir") ||
+    normalized.includes("quiero contratar") ||
+    normalized.includes("como contratar")
+  ) {
+    response = "Te paso con nuestro equipo de ventas. Un momento...";
+  }
+
+  // Modelos de celulares
+  else if (normalized.includes("telefonos") || normalized.includes("celulares") || normalized.includes("smartphones")) {
+    response = "📱 Modelos disponibles:\n" +
+      "1. Samsung Galaxy A14 - 1.000.000 Gs\n" +
+      "2. Xiaomi Redmi Note 11 - 1.200.000 Gs\n" +
+      "3. iPhone 11 - 3.000.000 Gs\n" +
+      "4. Moto G22 - 950.000 Gs\n" +
+      "5. Samsung Galaxy S22 - 4.500.000 Gs\n" +
+      "6. Xiaomi Poco X5 - 1.600.000 Gs\n" +
+      "7. iPhone SE - 2.300.000 Gs\n" +
+      "8. Realme 10 - 1.400.000 Gs\n" +
+      "9. Huawei Nova Y70 - 1.000.000 Gs\n" +
+      "10. ZTE Blade V40 - 850.000 Gs";
+  }
+
+  // Preguntas frecuentes
+  else if (normalized.includes("preguntas frecuentes") || normalized.includes("dudas frecuentes")) {
+    response = "❓ Dudas frecuentes:\n" +
+      "- ¿Cómo contratar un plan?\n" +
+      "- ¿Qué incluye cada plan?\n" +
+      "- ¿Qué modelos de celulares tienen?\n" +
+      "- ¿Hay promociones activas?\n" +
+      "- ¿El roaming está incluido?\n" +
+      "- ¿Qué velocidad tiene el internet?\n" +
+      "- ¿Cuánto tarda la instalación?\n" +
+      "- ¿Puedo cambiar de plan luego?\n" +
+      "- ¿Los planes tienen permanencia?\n" +
+      "- ¿Hay soporte técnico 24/7?";
+  }
+
+  // Respuesta por defecto
+  else {
+    response = "🤖 No entendí tu mensaje. Podés consultar sobre: planes de telefonía, internet, TV, smartphones, o cómo contratar.";
+  }
+
+  appendMessage(response, "bot");
+}
